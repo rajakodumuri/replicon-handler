@@ -14,9 +14,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Variables for use in the code build.
 # Replicon Tenant Access Details.
-REPLICON_COMPANY_KEY = None
-REPLICON_TENANT_USERNAME = None
-REPLICON_TENANT_PASSWORD = None
+COMPANY_KEY = None
+TENANT_USERNAME = None
+TENANT_PASSWORD = None
 # Logging and Connection Headers.
 LOG_FILE = None
 CONNECTION_HEADERS = None
@@ -30,15 +30,6 @@ logging.basicConfig(
     format='%(levelname)s %(asctime)s %(message)s'
 )
 
-# Never intended to run by itself.
-
-
-def main():
-    """
-        Never intended to run by itself.
-    """
-    pass
-
 
 def simple_handler(connector, headers, payload, auth):
     """Handling all connections."""
@@ -46,8 +37,8 @@ def simple_handler(connector, headers, payload, auth):
     log_payload = json.dumps(payload)
 
     if auth is not None:
-        auth = (f'{REPLICON_COMPANY_KEY}\{REPLICON_TENANT_USERNAME}',
-                REPLICON_TENANT_PASSWORD)
+        auth = (f'{COMPANY_KEY}\{TENANT_USERNAME}',
+                TENANT_PASSWORD)
 
     url_caller = requests.post(
         url=connector, headers=headers, data=json.dumps(payload), auth=auth)
@@ -145,7 +136,7 @@ def get_replicon_application_urls(company_key):
     GEN3_SWIMLANE,
     GEN3_SOURCE_SWIMLANE,
     POLARIS_SWIMLANE
-) = get_replicon_application_urls(REPLICON_COMPANY_KEY)
+) = get_replicon_application_urls(COMPANY_KEY)
 
 
 def replicon_web_service(webService, serviceComponent):
@@ -158,7 +149,3 @@ def replicon_source_web_service(webService, serviceComponent):
 
 def replicon_polaris_graphql():
     return f"{POLARIS_SWIMLANE}graphql"
-
-
-if __name__ == "__main__":
-    main()
