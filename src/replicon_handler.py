@@ -30,6 +30,15 @@ logging.basicConfig(
     format='%(levelname)s %(asctime)s %(message)s'
 )
 
+# Never intended to run by itself.
+
+
+def main():
+    """
+        Never intended to run by itself.
+    """
+    pass
+
 
 def simple_handler(connector, headers, payload, auth):
     """Handling all connections."""
@@ -149,3 +158,7 @@ def replicon_source_web_service(webService, serviceComponent):
 
 def replicon_polaris_graphql():
     return f"{POLARIS_SWIMLANE}graphql"
+
+
+if __name__ == "__main__":
+    main()
