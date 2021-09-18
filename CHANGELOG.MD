@@ -1,6 +1,7 @@
-# [0.0.2](https://www.github.com/rajakodumuri/replicon-handler/releases)
-- Minor Bug Fixes
-
-# [0.0.1](https://www.github.com/rajakodumuri/replicon-handler/releases)
-- Initial Project Packaging
-- Project Published to [PyPI](https://pypi.org/project/replicon-handler/)
+# [1.0.3](https://www.github.com/rajakodumuri/replicon-handler/releases)
+- Major code level redesign.
+- Added support to:
+    - Perform get requests.
+    - Work with User Audit Logs.
+    - Work with the Analytics API.
+- Added functionality to pause till the next hour, when Replicon Gen3 API Limitations are hit.
