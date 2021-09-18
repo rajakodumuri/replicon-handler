@@ -33,14 +33,6 @@ class RepliconHandler():
         self.headers = kwargs['headers']
         self.log_file = kwargs['log_file']
 
-        # Setting up Application Details
-        (
-            self.tenant_swimlane,
-            self.gen3_swimlane,
-            self.gen3_source_swimlane,
-            self.polaris_swimlane
-        ) = self.get_application_details()
-
         # Logger Configuration
         logging.basicConfig(
             filemode='w',
@@ -49,6 +41,14 @@ class RepliconHandler():
             datefmt='%m/%d/%Y %H:%M:%S',
             format='%(levelname)s %(asctime)s %(message)s'
         )
+
+        # Setting up Application Details
+        (
+            self.tenant_slug,
+            self.gen3_swimlane,
+            self.gen3_source_swimlane,
+            self.polaris_swimlane
+        ) = self.get_application_details()
 
     def post_request(self, connector, headers, payload, auth):
         """Handling Post Requests related to Replicon API."""
@@ -112,7 +112,7 @@ class RepliconHandler():
         headers = self.headers
         log_payload = json.dumps(payload)
         authentication = (f'{self.company_key}\{self.username}',
-                          self.password) if not self.authentication_token else self.authentication_token
+                          self.password) if not self.authentication_token else None
 
         try:
             if method == 'post':
@@ -175,7 +175,7 @@ class RepliconHandler():
         payload['tenant'] = tenant
 
         # Getting swimlane information from the Company Key
-        tenant_details = self.post_request(
+        status_code, tenant_details = self.post_request(
             get_tenant_details, swimlane_finder_headers, payload, None)
 
         application_root_urls = tenant_details['d']['applicationRootUrls']
