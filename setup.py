@@ -31,7 +31,7 @@ py_modules = [
 
 setup(
     name="replicon_handler",
-    version="1.0.5",
+    version="1.0.6",
 
     author="Rajendra Kodumuri",
     author_email="rajakodumuri@gmail.com",

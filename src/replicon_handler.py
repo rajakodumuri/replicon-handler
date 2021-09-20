@@ -121,7 +121,7 @@ class RepliconHandler():
                 if status_code == 429:
                     # API Limits: Initiating the operation in the next hour.
                     logging.error(f'Limited. Status Code: {status_code}.')
-                    self.till_next_hour(datetime.datetime.now())
+                    time.sleep(self.till_next_hour(datetime.datetime.now()))
                     return self.connection_handler(connector, payload)
             else:
                 status_code, result = self.get_request(
@@ -129,7 +129,7 @@ class RepliconHandler():
                 if status_code == 429:
                     # API Limits: Initiating the operation in the next hour.
                     logging.error(f'Limited. Status Code: {status_code}.')
-                    self.till_next_hour(datetime.datetime.now())
+                    time.sleep(self.till_next_hour(datetime.datetime.now()))
                     return self.connection_handler(connector, payload)
 
         except Exception as exception:
