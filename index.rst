@@ -46,12 +46,13 @@ Generation of Replicon tenant details and API URLs highlighted below,
 can be eliminated, to make working with the Replicon WebServices a
 breeze.
 
-- Finding the Slug.
-- Finding the Swimlane.
-- Generating URLs for:
-- Analytics API.
-- User Audit Log API.
-- Web Service End Points.
+* Finding the Slug.
+* Finding the Swimlane.
+* Generating URLs for:
+  
+  - Analytics API.
+  - User Audit Log API.
+  - Web Service End Points.
 
 .. code:: python
 
@@ -60,9 +61,9 @@ breeze.
     payload = {}
     all_users = replicon.connection_handler(get_all_users, payload)
 
--  Retries requests that failed due to connections failures.
--  Handles component call limitations of the Replicon Gen3 API.
--  Availability of concurrent threaded and asynchronous request
+* Retries requests that failed due to connections failures.
+* Handles component call limitations of the Replicon Gen3 API.
+* Availability of concurrent threaded and asynchronous request
    handlers, out of the box.
 
 .. code:: python
