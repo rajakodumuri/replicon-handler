@@ -1,3 +1,3 @@
-# [1.0.5](https://www.github.com/rajakodumuri/replicon-handler/releases)
-- Updated documentation.
-- Created [Read the Docs](https://replicon-handler/readthedocs.io) page for the library.
+# [1.0.6](https://www.github.com/rajakodumuri/replicon-handler/releases)
+- Fixed bugs related to the handling of API Call Limitations.
+- Minor documentation updates.

@@ -44,8 +44,14 @@ Supported Features
 
 Generation of Replicon tenant details and API URLs highlighted below,
 can be eliminated, to make working with the Replicon WebServices a
-breeze. - Finding the Slug. - Finding the Swimlane. - Generating URLs
-for: - Analytics API. - User Audit Log API. - Web Service End Points.
+breeze.
+
+- Finding the Slug.
+- Finding the Swimlane.
+- Generating URLs for:
+- Analytics API.
+- User Audit Log API.
+- Web Service End Points.
 
 .. code:: python
 
