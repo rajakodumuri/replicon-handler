@@ -22,7 +22,7 @@ replicon = RepliconHandler(
 )
 
 headers['Content-Type'] = 'application/json'
-headers['X-Replicon-Application'] = 'CompanyKey_OperationName_Version'
+headers['X-Replicon-Application'] = 'Rajendra_GetAllUsers'
 headers['Authorization'] = f'Bearer {replicon.authentication_token}'
 ```
 
@@ -33,10 +33,6 @@ Replicon Handler is distributed via PyPI, installing it is as simple as:
 ```bash
 > pip install -U replicon-handler
 ```
-
-## User Guide available on [Read the Docs](https://replicon-handler.readthedocs.io).
-
-[![Read the Docs](https://raw.githubusercontent.com/rajakodumuri/replicon-handler/main/extras/documentation.png)](https://replicon-handler.readthedocs.io)
 
 ## Supported Features
 
