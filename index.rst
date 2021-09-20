@@ -63,12 +63,11 @@ breeze.
 
 * Retries requests that failed due to connections failures.
 * Handles component call limitations of the Replicon Gen3 API.
-* Availability of concurrent threaded and asynchronous request
-   handlers, out of the box.
+* Availability of concurrent threaded and asynchronous request handlers, out of the box.
 
 .. code:: python
 
     get_user_details = replicon.web_service('UserService1.svc', 'GetUser2')
 
     payloads = [{'userUri':user['uri']} for user in all_users]
-    all_users_details = replicon.threaded\_handler(get_user_details, payloads, 5)
+    all_users_details = replicon.threaded_handler(get_user_details, payloads, 5)
