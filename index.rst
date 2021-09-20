@@ -1,8 +1,6 @@
 Handler for Replicon Web Services
 =================================
 
-|Downloads| |Supported Versions| |Contributors|
-
 Replicon-Handler is built in `Python <https://www.python.org/>`__ and is
 maintained by `Rajendra
 Kodumuri <https://www.github.com/rajakodumuri>`__. Interactions with
@@ -29,7 +27,7 @@ for more details.
     )
 
     headers['Content-Type'] = 'application/json'
-    headers['X-Replicon-Application'] = 'Rajendra_GetAllUsers'
+    headers['X-Replicon-Application'] = 'CompanyKey_OperationName_Version'
     headers['Authorization'] = f'Bearer {replicon.authentication_token}'
 
 Installing Replicon Handler
@@ -59,16 +57,11 @@ for: - Analytics API. - User Audit Log API. - Web Service End Points.
 -  Retries requests that failed due to connections failures.
 -  Handles component call limitations of the Replicon Gen3 API.
 -  Availability of concurrent threaded and asynchronous request
-   handlers, out of the box. \`\`\`python get\_user\_details =
-   replicon.web\_service('UserService1.svc', 'GetUser2')
+   handlers, out of the box.
 
-payloads = [{'userUri':user['uri']} for user in all\_users]
-all\_users\_details = replicon.threaded\_handler(get\_user\_details,
-payloads, 5) \`\`\`
+.. code:: python
 
-.. |Downloads| image:: https://pepy.tech/badge/replicon-handler/month
-   :target: https://pepy.tech/project/replicon-handler
-.. |Supported Versions| image:: https://img.shields.io/pypi/pyversions/replicon-handler.svg
-   :target: https://pypi.org/project/replicon-handler
-.. |Contributors| image:: https://img.shields.io/github/contributors/rajakodumuri/replicon-handler.svg
-   :target: https://github.com/rajakodumuri/replicon-handler/graphs/contributors
+    get_user_details = replicon.web_service('UserService1.svc', 'GetUser2')
+
+    payloads = [{'userUri':user['uri']} for user in all_users]
+    all_users_details = replicon.threaded\_handler(get_user_details, payloads, 5)
