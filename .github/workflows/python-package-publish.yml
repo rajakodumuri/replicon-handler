@@ -2,7 +2,7 @@
 # Uses build and twine to build and publish the package to PyPI.
 
 # GitHub Actions Workflow Name
-name: Publish Replicon Handler to PyPI
+name: Publish Replicon Handler
 
 # Actions Workflow runs when a new release is created
 on:
