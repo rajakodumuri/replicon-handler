@@ -3,7 +3,7 @@
 [![Downloads](https://pepy.tech/badge/replicon-handler/month)](https://pepy.tech/project/replicon-handler)
 [![Supported Versions](https://img.shields.io/pypi/pyversions/replicon-handler.svg)](https://pypi.org/project/replicon-handler)
 [![Contributors](https://img.shields.io/github/contributors/rajakodumuri/replicon-handler.svg)](https://github.com/rajakodumuri/replicon-handler/graphs/contributors)
-[![Upload Python Package](https://github.com/rajakodumuri/replicon-handler/actions/workflows/python-package-publish.yml/badge.svg)](https://github.com/rajakodumuri/replicon-handler/actions/workflows/python-package-publish.yml)
+[![Publish Replicon Handler](https://github.com/rajakodumuri/replicon-handler/actions/workflows/python-package-publish.yml/badge.svg)](https://github.com/rajakodumuri/replicon-handler/actions/workflows/python-package-publish.yml)
 
 Replicon-Handler is built in [Python](https://www.python.org/) and is maintained by [Rajendra Kodumuri](https://www.github.com/rajakodumuri). Interactions with Replicon WebServices are made possible, using the [requests](https://docs.python-requests.org/en/latest/) library.
 
