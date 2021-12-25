@@ -1,3 +1,33 @@
-# [1.0.7](https://www.github.com/rajakodumuri/replicon-handler/releases)
-- Adding CI-CD functionality with the help of GitHub Actions.
-- Actions Workflow will be building and publishing packages on new GitHub releases.
+# [1.1.7](https://www.github.com/rajakodumuri/replicon-handler/releases)
+- Minor code restructuring.
+- New GitHub Action to create and publish a release on tag push.
+- Updates to Replicon Handler hosted on PyPI will continue to be pushed on release.
+- Error handling during object instantiation, to avoid operational issues.
+    - Mandated following keys:
+        - `company_key`
+        - `username`, `password`
+        - `authentication_token`
+        - `method`, `headers`, `log_path`
+- Redesigned the handling of log file paths and log file names.
+    - Object instantiation will now take a path for log files instead of a log file path.
+        - Instantiation key has been renamed to `log_path` from `log_file`.
+    - If a path is not defined, current working directory will be used.
+    - Directory: `Replicon-Activity-Logs` will be created for logs to be placed.
+    - Log files, by default, will be named as `{CompanyKey}_log_{timestamp}.log` (variable items in wrapped in {})
+    - Logger levels can be specified during object instantiation.
+        - Level specification is not mandated.
+        - Default level of the logger is `logging.DEBUG`.
+        - Key to specify logger level: `logger_level` (`import logging` is required).
+- Added application version tracking for better logging.
+    - `X-Replicon-Application` header will be modified to include `Replicon-Handler` version.
+        - Format: `X-Replicon-Application; v=Replicon-Handler-v1.1.7`
+    - Calls made by `Replicon-Handler` to Replicon Global Services will now have this header.
+- Headers: `Content-Type` and `X-Replicon-Application` have been mandated during instantiation.
+- New methods for URL generation have been added:
+    - Replicon Global Services `global_services`.
+    - Replicon WebHooks API `webhooks`.
+- Existing URL generating methods have been modified:
+    - `source_web_service` has been removed.
+    - `audit_log` has been renamed to `user_audit_logs`.
+    - `analytics_table` no longer exists. `analytics_tables` will take an optional `table_id`.
+    - `analytics_extract` no longer exists. `analytics_extracts` will take an optional `extract_id`.

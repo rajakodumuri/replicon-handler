@@ -11,6 +11,7 @@ classifiers = [
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
 
     'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent',
@@ -31,7 +32,7 @@ py_modules = [
 
 setup(
     name='replicon_handler',
-    version='1.0.6',
+    version='1.1.7',
 
     author='Rajendra Kodumuri',
     author_email='rajakodumuri@gmail.com',
@@ -53,7 +54,6 @@ setup(
     python_requires='>=3.6',
     install_requires=[
         'requests',
-        'asyncio',
         'aiohttp'
     ],
 )
