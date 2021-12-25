@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-with open("README.md", "r", encoding="utf-8") as read_me:
+with open('README.md', 'r', encoding='utf-8') as read_me:
     long_description = read_me.read()
 
 classifiers = [
@@ -22,7 +22,7 @@ classifiers = [
 
 project_urls = {
     'Source': 'https://github.com/rajakodumuri/replicon-handler/',
-    "Bug Tracker": "https://github.com/rajakodumuri/replicon-handler/issues",
+    'Bug Tracker': 'https://github.com/rajakodumuri/replicon-handler/issues',
 }
 
 py_modules = [
@@ -30,27 +30,27 @@ py_modules = [
 ]
 
 setup(
-    name="replicon_handler",
-    version="1.0.6",
+    name='replicon_handler',
+    version='1.0.6',
 
-    author="Rajendra Kodumuri",
-    author_email="rajakodumuri@gmail.com",
+    author='Rajendra Kodumuri',
+    author_email='rajakodumuri@gmail.com',
 
-    description="Work with Replicon Web Services easily.",
+    description='Work with Replicon Web Services easily.',
     long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description_content_type='text/markdown',
 
-    url="https://github.com/rajakodumuri/replicon-handler",
+    url='https://github.com/rajakodumuri/replicon-handler',
     project_urls=project_urls,
     classifiers=classifiers,
 
     keywords='replicon, webservices, api, gen3, polaris',
 
     py_modules=py_modules,
-    package_dir={"": "src"},
-    packages=find_packages(where="src"),
+    package_dir={'': 'src'},
+    packages=find_packages(where='src'),
 
-    python_requires=">=3.6",
+    python_requires='>=3.6',
     install_requires=[
         'requests',
         'asyncio',

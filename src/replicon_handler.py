@@ -1,3 +1,4 @@
+import os
 import json
 import time
 import logging
@@ -14,48 +15,104 @@ import aiohttp
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
-class RepliconHandler():
+class RepliconHandler:
     """Handling all Replicon related functions with this."""
+
+    essentials = ['company_key', 'username', 'password',
+                  'authentication_token', 'method', 'headers', 'log_path']
 
     def __init__(self, **kwargs):
         """Instantiating the Replicon operation handler class."""
 
+        # Validating existence of necessary instantiation variables.
+        for essential in self.essentials:
+            if essential not in kwargs.keys():
+                message = f'Essential Key: {essential} is missing.'
+                notices = f'Check initialization of RepliconHandler.'
+                raise KeyError(f'{message} {notices}')
+
         # Setting up tenant details.
-        self.company_key = kwargs['company_key']
+        if kwargs['company_key']:
+            self.company_key = kwargs['company_key']
+        else:
+            raise ValueError(f'Company Key is required.')
 
         # Setting up authentication details.
-        self.authentication_token = kwargs['authentication_token']
-        self.username = kwargs['username']
-        self.password = kwargs['password']
+        if kwargs['username'] and kwargs['password']:
+            self.username = kwargs['username']
+            self.password = kwargs['password']
+        elif kwargs['authentication_token']:
+            self.authentication_token = kwargs['authentication_token']
+        else:
+            raise ValueError(f'Credentials or Token is mandatory.')
 
-        # Setting up requirements for successful operations.
-        self.method = kwargs['method']
-        self.headers = kwargs['headers']
-        self.log_file = kwargs['log_file']
+        # Evaluating HTTP method used for operations.
+        if kwargs['method'] and kwargs['method'] in ['post', 'get']:
+            self.method = kwargs['method']
+        else:
+            raise ValueError(f'Method must be "post" or "get".')
+
+        # Setting up basic headers, meeting Replicon requirements.
+        if kwargs['headers']:
+            self.headers = kwargs['headers']
+
+            for header in ['Content-Type', 'X-Replicon-Application']:
+                if header not in self.headers.keys():
+                    raise KeyError(f'{header} is not included in the headers.')
+
+            application = self.headers['X-Replicon-Application']
+            version = 'Replicon-Handler-v1.1.7'
+            application_version = f'{application}; v={version}'
+            self.headers['X-Replicon-Application'] = application_version
+        else:
+            raise ValueError(f'Headers are mandatory.')
+
+        # Setting up a path to place operational activity logs in.
+        if kwargs['log_path']:
+            log_path = rf"{kwargs['log_path']}\Replicon-Activity-Logs"
+            if not os.path.exists(log_path):
+                os.mkdir(log_path)
+
+            self.log_path = log_path
+            self.log_time = time.strftime('%Y%m%d%H%M%S', time.localtime())
+            self.log_file_name = f'{self.company_key}_log_{self.log_time}.log'
+            self.log_file = rf'{self.log_path}\{self.log_file_name}'
+        else:
+            log_path = rf"{os.getcwd()}\Replicon-Activity-Logs"
+            if not os.path.exists(log_path):
+                os.mkdir(log_path)
+
+            self.log_path = log_path
+            self.log_time = time.strftime('%Y%m%d%H%M%S', time.localtime())
+            self.log_file_name = f'{self.company_key}_log_{self.log_time}.log'
+            self.log_file = rf'{self.log_path}\{self.log_file_name}'
+
+        # Allowing flexibility to set up logging levels manually.
+        log_level = 'logger_level'
+        manual_level = log_level in kwargs.keys() and kwargs[log_level]
+        self.log_level = kwargs[log_level] if manual_level else logging.DEBUG
 
         # Logger Configuration
         logging.basicConfig(
-            filemode='w',
-            filename=self.log_file,
-            level=logging.DEBUG,
-            datefmt='%m/%d/%Y %H:%M:%S',
+            filemode='w', filename=self.log_file,
+            level=self.log_level, datefmt='%m/%d/%Y %H:%M:%S',
             format='%(levelname)s %(asctime)s %(message)s'
         )
 
-        # Setting up Application Details
+        # Setting up Replicon Global Domain.
+        self.global_domain = 'https://global.replicon.com'
+
+        # Setting up Replicon Tenant Details.
         (
-            self.tenant_slug,
-            self.gen3_swimlane,
-            self.gen3_source_swimlane,
-            self.polaris_swimlane
+            self.tenant_slug, self.swimlane,
+            self.source_swimlane, self.polaris
         ) = self.get_application_details()
 
-    def post_request(self, connector, headers, payload, auth):
+    @staticmethod
+    def post_request(connector, headers, payload, auth):
         """Handling Post Requests related to Replicon API."""
 
-        log_payload = json.dumps(payload)
-
-        url_caller = requests.post(
+        log_payload, url_caller = json.dumps(payload), requests.post(
             url=connector, headers=headers, data=json.dumps(payload), auth=auth)
 
         status_code = url_caller.status_code
@@ -64,21 +121,20 @@ class RepliconHandler():
 
         result = url_caller.json()
         error_in_result = result.get('error')
+        log_message = f'Payload: {log_payload} Response: {result}'
 
         if error_in_result:
-            logging.error(
-                f'Payload: {log_payload} Response: {error_in_result}')
+            logging.error(log_message)
             return status_code, error_in_result
 
-        logging.info(f'Payload: {log_payload} Response: {result}')
+        logging.info(log_message)
         return status_code, result
 
-    def get_request(self, connector, headers, payload, auth):
+    @staticmethod
+    def get_request(connector, headers, payload, auth):
         """Handling Get Requests related to Replicon API."""
 
-        log_payload = json.dumps(payload)
-
-        url_caller = requests.get(
+        log_payload, url_caller = json.dumps(payload), requests.get(
             url=connector, headers=headers, params=payload, auth=auth)
 
         status_code = url_caller.status_code
@@ -87,32 +143,28 @@ class RepliconHandler():
 
         result = url_caller.json()
         error_in_result = result.get('error')
+        log_message = f'Payload: {log_payload} Response: {result}'
 
         if error_in_result:
-            logging.error(
-                f'Payload: {log_payload} Response: {error_in_result}')
+            logging.error(log_message)
             return status_code, error_in_result
 
-        logging.info(f'Payload: {log_payload} Response: {result}')
+        logging.info(log_message)
         return status_code, error_in_result
 
+    @staticmethod
     def till_next_hour(now):
         """Evaluating time delta between now and the next hour."""
         return (60 * 60) - (now.minute * 60 + now.second)
 
     def connection_handler(self, connector, payload):
-        """
-            Handling connections based on:
-            - Methods
-            - API Limitations
-            - Connection Exceptions
-        """
+        """Handling connections, exceptions and API Limitations."""
 
-        method = self.method
-        headers = self.headers
         log_payload = json.dumps(payload)
-        authentication = (f'{self.company_key}\{self.username}',
-                          self.password) if not self.authentication_token else None
+        method, headers = self.method, self.headers
+        authentication = None if self.authentication_token else (
+            rf'{self.company_key}\{self.username}', self.password
+        )
 
         try:
             if method == 'post':
@@ -134,8 +186,8 @@ class RepliconHandler():
 
         except Exception as exception:
             exception_type = exception.__class__.__name__
-            logging.error(
-                f'Payload: {log_payload} Exception: {exception_type} {exception}')
+            exception_message = f'Exception: {exception_type} {exception}'
+            logging.error(f'Payload: {log_payload} {exception_message}')
 
             # Attempting the failed operation again.
             print(f'Exception: {exception_type}. Retrying in a moment.')
@@ -151,7 +203,8 @@ class RepliconHandler():
 
         with ThreadPoolExecutor(max_workers=workers) as threaded_executor:
             executor = {threaded_executor.submit(
-                self.connection_handler, connector, payload): payload for payload in payloads}
+                self.connection_handler, connector, payload
+            ): payload for payload in payloads}
 
             for result in as_completed(executor):
                 counter += 1
@@ -163,65 +216,69 @@ class RepliconHandler():
     def get_application_details(self):
         """Gathering Replicon Tenant Swimlane Details."""
 
-        # Tenant details URL.
-        get_tenant_details = 'https://global.replicon.com/DiscoveryService1.svc/GetTenantEndpointDetails'
+        # Tenant details service URL.
+        get_tenant_details = self.global_services(
+            'DiscoveryService1.svc', 'GetTenantEndpointDetails')
 
-        swimlane_finder_headers = {'content-type': 'application/json'}
+        swimlane_finder_headers = {
+            'content-type': 'application/json',
+            'X-Replicon-Application': self.headers['X-Replicon-Application']
+        }
 
         # Payload Body Creation.
-        payload = {}
-        tenant = {}
-        tenant['companyKey'] = self.company_key
-        payload['tenant'] = tenant
+        payload, tenant = dict(), dict()
+        tenant['companyKey'], payload['tenant'] = self.company_key, tenant
 
         # Getting swimlane information from the Company Key
         status_code, tenant_details = self.post_request(
             get_tenant_details, swimlane_finder_headers, payload, None)
 
-        application_root_urls = tenant_details['d']['applicationRootUrls']
+        root_urls = tenant_details['d']['applicationRootUrls']
+        slug = tenant_details['d']['tenant']['slug']
+        swimlane = tenant_details['d']['applicationRootUrl']
+        source_swimlane = '//src-'.join(swimlane.split('//'))
+        polaris = root_urls[0]['rootUrl']
 
-        tenant_slug = tenant_details['d']['tenant']['slug']
-
-        gen3_swimlane = tenant_details['d']['applicationRootUrl']
-
-        gen3_source_swimlane = gen3_swimlane.split('//')
-        gen3_source_swimlane = '//src-'.join(gen3_source_swimlane)
-
-        polaris_swimlane = application_root_urls[0]['rootUrl']
-
-        application_details = (tenant_slug, gen3_swimlane,
-                               gen3_source_swimlane, polaris_swimlane)
+        application_details = (slug, swimlane, source_swimlane, polaris)
 
         return application_details
 
-    def web_service(self, webService, serviceComponent):
-        """Generating Replicon Web Service URL."""
-        return f'{self.gen3_swimlane}services/{webService}/{serviceComponent}'
+    def global_services(self, service, component, additional=None):
+        """Generating Replicon Global Service URLs."""
+        if additional:
+            return f'{self.global_domain}/{additional}/{service}/{component}'
 
-    def source_web_service(self, webService, serviceComponent):
-        """Generating Replicon Source Web Service URL."""
-        return f'{self.gen3_source_swimlane}services/{webService}/{serviceComponent}'
+        return f'{self.global_domain}/{service}/{component}'
+
+    def web_service(self, service, component, source=False):
+        """Generating Replicon Web Service URLs."""
+        if source:
+            return f'{self.source_swimlane}services/{service}/{component}'
+
+        return f'{self.swimlane}services/{service}/{component}'
 
     def graphql(self):
         """Generating Replicon GraphQL URL."""
-        return f'{self.polaris_swimlane}graphql'
+        return f'{self.polaris}graphql'
 
-    def audit_log(self):
-        """Generating Replicon User Audit Log URL."""
-        return f'{self.gen3_swimlane}adminapi/audit-logs'
+    def webhooks(self):
+        """Generating Replicon Webhook API GraphQL URL."""
+        return f'{self.swimlane}webhook-api/graphql'
 
-    def analytics_extracts(self):
-        """Generating URL to Get/Create Replicon Analytics Extract(s)."""
-        return f'{self.gen3_swimlane}analytics/extracts'
+    def user_audit_logs(self):
+        """Generating Replicon User Audit Logs URL."""
+        return f'{self.swimlane}adminapi/audit-logs'
 
-    def analytics_extract(self, extract_id):
-        """Generating URL to Get Replicon Analytics Extract Details"""
-        return f'{self.gen3_swimlane}analytics/extracts/{extract_id}'
+    def analytics_extracts(self, extract_id=None):
+        """Generating URLs to Get/Create Replicon Analytics Extract(s)."""
+        if extract_id:
+            return f'{self.swimlane}analytics/extracts/{extract_id}'
 
-    def analytics_tables(self):
-        """Generating URL to Get All Replicon Analytics Tables."""
-        return f'{self.gen3_swimlane}analytics/tables'
+        return f'{self.swimlane}analytics/extracts'
 
-    def analytics_table(self, table_id):
-        """Generating URL to Get Details of a Replicon Analytics Table."""
-        return f'{self.gen3_swimlane}analytics/tables/{table_id}'
+    def analytics_tables(self, table_id=None):
+        """Generating URL to Get Replicon Analytics Table(s)."""
+        if table_id:
+            return f'{self.swimlane}analytics/tables/{table_id}'
+
+        return f'{self.swimlane}analytics/tables'

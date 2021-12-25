@@ -1,0 +1,33 @@
+# Creating a GitHub Actions Workflow to create and publish a Repository Release
+# Uses create-release action by GitHub Actions to create and publish a release.
+
+# GitHub Actions Workflow Name
+name: Create and Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout latest code
+      - name: Checkout code
+        uses: actions/checkout@v2
+    
+      # Setting up release params
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: false

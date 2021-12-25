@@ -14,7 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      # Checkout latest code
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       # Setting up Python Version
       - name: Set up Python
