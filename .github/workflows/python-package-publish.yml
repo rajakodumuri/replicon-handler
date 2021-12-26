@@ -17,6 +17,9 @@ jobs:
       # Checkout latest code
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: main
 
       # Setting up Python Version
       - name: Set up Python
