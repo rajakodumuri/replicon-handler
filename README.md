@@ -1,7 +1,6 @@
 # Handler for Replicon Web Services
 
 [![Downloads](https://pepy.tech/badge/replicon-handler/month)](https://pepy.tech/project/replicon-handler)
-[![Changelog v1.1.7 badge][changelog-badge]][changelog]
 [![Supported Versions](https://img.shields.io/pypi/pyversions/replicon-handler.svg)](https://pypi.org/project/replicon-handler)
 [![Contributors](https://img.shields.io/github/contributors/rajakodumuri/replicon-handler.svg)](https://github.com/rajakodumuri/replicon-handler/graphs/contributors)
 [![Publish Replicon Handler](https://github.com/rajakodumuri/replicon-handler/actions/workflows/python-package-publish.yml/badge.svg)](https://github.com/rajakodumuri/replicon-handler/actions/workflows/python-package-publish.yml)
