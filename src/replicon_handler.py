@@ -3,7 +3,6 @@ import json
 import time
 import logging
 import datetime
-from urllib.error import HTTPError
 
 # Connections to the Replicon API are made possible with requests library.
 import requests
@@ -186,27 +185,27 @@ class RepliconHandler:
                     return self.connection_handler(connector, payload)
 
         except Exception as exception:
-            exception_type = exception.__class__.__name__
-            exception_message = f'Exception: {exception_type} {exception}'
+            exception_type = exception.__class__
+            exception_name = exception_type.__name__
+            retry_worthy = [requests.ConnectionError, requests.HTTPError]
+            exception_message = f'Exception: {exception_name} {exception}'
             logging.error(f'Payload: {log_payload} {exception_message}')
 
-            retry_worthy = [ConnectionError, HTTPError]
-            if exception_type not in retry_worthy:
-                # Retry the failed operation after a gap.
-                print(f'Exception: {exception_type}. Retrying in 20 seconds.')
+            if exception_type in retry_worthy:
+                # Retry the failed operation after a short gap.
+                print(f'Exception: {exception_name}. Retrying in a moment.')
                 time.sleep(20)
-
                 return self.connection_handler(connector, payload)
             else:
-                # Raise the exception to be handled by the instance.
-                raise exception_type(f'Unexpected Error.\n{exception_message}')
+                # Raise the exception to be handled by the invoker.
+                raise exception_type(f'{exception}')
 
         return result
 
     def threaded_handler(self, connector, payloads, workers):
         """Handling connections asynchronously for faster execution."""
 
-        counter, results = 0, []
+        counter, results = 0, list()
 
         with ThreadPoolExecutor(max_workers=workers) as threaded_executor:
             executor = {threaded_executor.submit(
