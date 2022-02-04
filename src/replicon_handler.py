@@ -3,6 +3,7 @@ import json
 import time
 import logging
 import datetime
+from urllib.error import HTTPError
 
 # Connections to the Replicon API are made possible with requests library.
 import requests
@@ -189,10 +190,16 @@ class RepliconHandler:
             exception_message = f'Exception: {exception_type} {exception}'
             logging.error(f'Payload: {log_payload} {exception_message}')
 
-            # Attempting the failed operation again.
-            print(f'Exception: {exception_type}. Retrying in a moment.')
-            time.sleep(20)
-            return self.connection_handler(connector, payload)
+            retry_worthy = [ConnectionError, HTTPError]
+            if exception_type not in retry_worthy:
+                # Retry the failed operation after a gap.
+                print(f'Exception: {exception_type}. Retrying in 20 seconds.')
+                time.sleep(20)
+
+                return self.connection_handler(connector, payload)
+            else:
+                # Raise the exception to be handled by the instance.
+                raise exception_type(f'Unexpected Error.\n{exception_message}')
 
         return result
 
