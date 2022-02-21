@@ -116,6 +116,10 @@ class RepliconHandler:
             url=connector, headers=headers, data=json.dumps(payload), auth=auth)
 
         status_code = url_caller.status_code
+
+        if status_code == 429:
+            return status_code, 'API Calls Limit Reached.'
+
         correlation_id = url_caller.headers['x-execution-correlation-id']
         logging.debug(f'Correlation ID: {correlation_id}')
 
@@ -138,6 +142,10 @@ class RepliconHandler:
             url=connector, headers=headers, params=payload, auth=auth)
 
         status_code = url_caller.status_code
+
+        if status_code == 429:
+            return status_code, 'API Calls Limit Reached.'
+
         correlation_id = url_caller.headers['x-execution-correlation-id']
         logging.debug(f'Correlation ID: {correlation_id}')
 
