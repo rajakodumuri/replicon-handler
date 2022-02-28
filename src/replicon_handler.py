@@ -41,7 +41,9 @@ class RepliconHandler:
         if kwargs['username'] and kwargs['password']:
             self.username = kwargs['username']
             self.password = kwargs['password']
+            self.authentication_token = None
         elif kwargs['authentication_token']:
+            self.username, self.password = None, None
             self.authentication_token = kwargs['authentication_token']
         else:
             raise ValueError(f'Credentials or Token is mandatory.')
